@@ -20,7 +20,7 @@ export default function InternalChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   
-  // Im Hintergrund fix auf den ersten User gesetzt, bis das echte Login steht. UI ist komplett weg.
+  // Im Hintergrund fix auf den ersten User gesetzt (ohne UI)
   const [activeUser] = useState(USERS[0]); 
   
   const [recipient, setRecipient] = useState<string>('all'); 
@@ -91,40 +91,49 @@ export default function InternalChat() {
   };
 
   return (
-    <div style={{ 
+    <div className="fade-in" style={{ 
       display: 'flex', 
       flexDirection: 'column', 
       height: '75vh', 
       backgroundColor: '#111827', 
       borderRadius: '16px', 
-      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.5)',
+      borderTop: '4px solid #ec4899',
       overflow: 'hidden',
       color: '#f9fafb'
     }}>
       
       {/* Header & Controls */}
       <div style={{ 
-        padding: '1.5rem', 
-        backgroundColor: '#1f2937', 
+        padding: '1.5rem 2rem', 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center',
         gap: '1rem',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
       }}>
-        {/* Farbe auf Weiß (#f9fafb) gesetzt für Lesbarkeit */}
-        <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f9fafb' }}>
-          💬 Chat
+        <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#ec4899' }}>
+          💬 Interner Chat
         </h2>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          {/* Label vor das Dropdown gezogen */}
-          <span style={{ color: '#f9fafb', fontSize: '0.9rem', fontWeight: '600' }}>Senden an:</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <span style={{ color: '#9ca3af', fontSize: '0.95rem', fontWeight: '600' }}>Senden an:</span>
           
           <select 
             value={recipient} 
             onChange={(e) => setRecipient(e.target.value)}
-            style={{ padding: '0.5rem 1rem', borderRadius: '8px', backgroundColor: '#ec4899', color: '#ffffff', border: 'none', outline: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+            style={{ 
+              padding: '0.6rem 1.2rem', 
+              borderRadius: '8px', 
+              backgroundColor: '#ec4899', 
+              color: '#ffffff', 
+              border: 'none', 
+              outline: 'none', 
+              cursor: 'pointer', 
+              fontWeight: '600',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2)'
+            }}
           >
             <option value="all">Alle</option>
             {USERS.map(user => (
@@ -135,7 +144,7 @@ export default function InternalChat() {
       </div>
 
       {/* Nachrichten-Verlauf */}
-      <div style={{ flex: 1, padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ flex: 1, padding: '2rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         {messages.map((msg) => {
           const isMe = msg.sender_id === activeUser.id;
           
@@ -143,17 +152,17 @@ export default function InternalChat() {
           if (!isRelevant) return null;
 
           return (
-            <div key={msg.id} style={{ alignSelf: isMe ? 'flex-end' : 'flex-start', maxWidth: '75%' }}>
-              <div style={{ fontSize: '0.75rem', color: '#9ca3af', marginBottom: '0.3rem', textAlign: isMe ? 'right' : 'left' }}>
+            <div key={msg.id} className="fade-in" style={{ alignSelf: isMe ? 'flex-end' : 'flex-start', maxWidth: '75%' }}>
+              <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.4rem', textAlign: isMe ? 'right' : 'left' }}>
                 {getUserName(msg.sender_id)} {msg.recipient_id ? `→ an ${getUserName(msg.recipient_id)}` : '→ an Alle'}
               </div>
               <div style={{ 
-                padding: '0.75rem 1.25rem', 
-                backgroundColor: isMe ? '#ec4899' : '#374151', 
+                padding: '1rem 1.5rem', 
+                backgroundColor: isMe ? '#ec4899' : '#1f2937', 
                 color: '#ffffff',
-                borderRadius: '12px', 
-                borderBottomRightRadius: isMe ? '2px' : '12px',
-                borderBottomLeftRadius: !isMe ? '2px' : '12px',
+                borderRadius: '16px', 
+                borderBottomRightRadius: isMe ? '4px' : '16px',
+                borderBottomLeftRadius: !isMe ? '4px' : '16px',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
               }}>
                 {msg.message}
@@ -165,15 +174,37 @@ export default function InternalChat() {
       </div>
 
       {/* Eingabefeld */}
-      <form onSubmit={handleSendMessage} style={{ padding: '1.5rem', backgroundColor: '#1f2937', display: 'flex', gap: '1rem' }}>
+      <form onSubmit={handleSendMessage} style={{ padding: '1.5rem 2rem', backgroundColor: 'rgba(255, 255, 255, 0.02)', display: 'flex', gap: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
         <input 
           type="text" 
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Nachricht tippen..." 
-          style={{ flex: 1, padding: '0.75rem 1rem', borderRadius: '8px', backgroundColor: '#111827', color: '#f9fafb', border: 'none', outline: 'none' }}
+          style={{ 
+            flex: 1, 
+            padding: '1rem 1.25rem', 
+            borderRadius: '12px', 
+            backgroundColor: '#1f2937', 
+            color: '#f9fafb', 
+            border: 'none', 
+            outline: 'none',
+            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)'
+          }}
         />
-        <button type="submit" style={{ padding: '0.75rem 1.5rem', backgroundColor: '#be185d', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+        <button 
+          type="submit" 
+          className="hover-scale"
+          style={{ 
+            padding: '0 1.5rem', 
+            backgroundColor: '#be185d', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '12px', 
+            cursor: 'pointer', 
+            fontWeight: 'bold',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2)'
+          }}
+        >
           Senden
         </button>
       </form>
