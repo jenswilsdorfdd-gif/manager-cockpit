@@ -1,18 +1,44 @@
 import React, { useState } from 'react';
 import InternalChat from './components/InternalChat';
 
-// --- PLATZHALTER-KOMPONENTEN ---
+// --- ANIMATIONEN & STYLES ---
+// CSS direkt injiziert für fließende Animationen ohne externe Dependencies (Regel 11)
+const styleSheet = `
+  .fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hover-scale {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .hover-scale:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.4) !important;
+  }
+  .back-btn {
+    transition: all 0.2s ease;
+  }
+  .back-btn:hover {
+    background-color: #374151 !important;
+    transform: scale(1.03);
+  }
+`;
+
+// --- UNTERSEITEN (Aufgewertet) ---
 const TaskManager = () => (
-  <div style={{ padding: '2rem', backgroundColor: '#111827', borderRadius: '16px', minHeight: '70vh', color: 'white', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-    <h2 style={{ marginTop: 0, color: '#4ade80' }}>📋 Aufgaben</h2>
-    <p>Hier entsteht das detaillierte Wiedervorlage-Modul (Tasks)...</p>
+  <div className="fade-in" style={{ padding: '2.5rem', backgroundColor: '#111827', borderRadius: '16px', minHeight: '70vh', color: '#f9fafb', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.5)', borderTop: '4px solid #f43f5e' }}>
+    <h2 style={{ marginTop: 0, color: '#f43f5e', fontSize: '1.8rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>📋 Aufgaben</h2>
+    <p style={{ color: '#9ca3af', fontSize: '1.1rem' }}>Hier entsteht das detaillierte Wiedervorlage-Modul (Tasks)...</p>
   </div>
 );
 
 const FinanceLedger = () => (
-  <div style={{ padding: '2rem', backgroundColor: '#111827', borderRadius: '16px', minHeight: '70vh', color: 'white', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-    <h2 style={{ marginTop: 0, color: '#60a5fa' }}>💰 Finanzen</h2>
-    <p>Hier entsteht der detaillierte Cashflow-Tracker...</p>
+  <div className="fade-in" style={{ padding: '2.5rem', backgroundColor: '#111827', borderRadius: '16px', minHeight: '70vh', color: '#f9fafb', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.5)', borderTop: '4px solid #4f46e5' }}>
+    <h2 style={{ marginTop: 0, color: '#4f46e5', fontSize: '1.8rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>💰 Finanzen</h2>
+    <p style={{ color: '#9ca3af', fontSize: '1.1rem' }}>Hier entsteht der detaillierte Cashflow-Tracker...</p>
   </div>
 );
 
@@ -23,11 +49,15 @@ export default function App() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#0b0f19', color: '#f9fafb', padding: '2rem', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       
-      {/* Header - Zentriert auf die gleiche Breite wie die Kacheln für einen sauberen Look */}
+      {/* StyleSheet injizieren */}
+      <style>{styleSheet}</style>
+
+      {/* Header */}
       <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '800px', margin: '0 auto 3rem auto' }}>
         <h1 style={{ margin: 0, fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.025em' }}>MANAGER COCKPIT</h1>
         {activeView !== 'dashboard' && (
           <button 
+            className="fade-in back-btn"
             onClick={() => setActiveView('dashboard')}
             style={{ 
               padding: '0.75rem 1.5rem', 
@@ -36,7 +66,8 @@ export default function App() {
               border: 'none', 
               borderRadius: '8px', 
               cursor: 'pointer', 
-              fontWeight: '600' 
+              fontWeight: '600',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2)'
             }}
           >
             ← Zurück zum Dashboard
@@ -46,19 +77,20 @@ export default function App() {
       
       {/* DASHBOARD ANSICHT */}
       {activeView === 'dashboard' && (
-        <main style={{ 
+        <main className="fade-in" style={{ 
           display: 'flex', 
-          flexDirection: 'column', // Zwingt die Boxen strikt untereinander
+          flexDirection: 'column',
           gap: '2rem',
-          maxWidth: '800px', // Begrenzt die Breite, damit sie nicht klobig wirken
+          maxWidth: '800px',
           margin: '0 auto'
         }}>
           
           {/* AUFGABEN KACHEL */}
           <div 
+            className="hover-scale"
             onClick={() => setActiveView('tasks')}
             style={{ 
-              background: 'linear-gradient(135deg, #f43f5e 0%, #fb923c 100%)', // Kräftiges Pink-Orange
+              background: 'linear-gradient(135deg, #f43f5e 0%, #fb923c 100%)', 
               borderRadius: '16px', 
               padding: '2rem', 
               cursor: 'pointer',
@@ -81,9 +113,10 @@ export default function App() {
 
           {/* FINANZEN KACHEL */}
           <div 
+            className="hover-scale"
             onClick={() => setActiveView('finance')}
             style={{ 
-              background: 'linear-gradient(135deg, #4f46e5 0%, #d946ef 100%)', // Tiefes Blau zu Neon-Lila
+              background: 'linear-gradient(135deg, #4f46e5 0%, #d946ef 100%)', 
               borderRadius: '16px', 
               padding: '2rem', 
               cursor: 'pointer',
@@ -106,9 +139,10 @@ export default function App() {
 
           {/* CHAT KACHEL */}
           <div 
+            className="hover-scale"
             onClick={() => setActiveView('chat')}
             style={{ 
-              background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', // Lila zu intensivem Pink
+              background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', 
               borderRadius: '16px', 
               padding: '2rem', 
               cursor: 'pointer',
@@ -132,11 +166,15 @@ export default function App() {
         </main>
       )}
 
-      {/* DETAIL ANSICHTEN - Hier nutzen wir die volle Breite für die Module */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      {/* DETAIL ANSICHTEN */}
+      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
         {activeView === 'tasks' && <TaskManager />}
         {activeView === 'finance' && <FinanceLedger />}
-        {activeView === 'chat' && <InternalChat />}
+        {activeView === 'chat' && (
+          <div className="fade-in">
+            <InternalChat />
+          </div>
+        )}
       </div>
 
     </div>
