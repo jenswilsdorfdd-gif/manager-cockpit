@@ -1,4 +1,5 @@
 import React from 'react';
+import InternalChat from './components/InternalChat';
 
 // --- PLATZHALTER-KOMPONENTEN ---
 // Diese lagern wir später gemäß Regel 12 in saubere Child-Komponenten aus.
@@ -15,14 +16,6 @@ const FinanceLedger = () => (
     <p style={{ color: '#1d4ed8' }}>Hier entsteht das Ledger / der Cashflow-Tracker...</p>
   </div>
 );
-
-const InternalChat = () => (
-  <div style={{ padding: '1.5rem', backgroundColor: '#fdf2f8', borderRadius: '12px', minHeight: '70vh', border: '1px solid #fbcfe8' }}>
-    <h2 style={{ marginTop: 0, color: '#9d174d' }}>💬 Interner Chat</h2>
-    <p style={{ color: '#be185d' }}>Hier entsteht der Realtime-Chat...</p>
-  </div>
-);
-
 
 // --- HAUPT-LAYOUT ---
 export default function App() {
