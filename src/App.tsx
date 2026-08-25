@@ -23,8 +23,8 @@ export default function App() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#0b0f19', color: '#f9fafb', padding: '2rem', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       
-      {/* Header mit Zurück-Button, wenn nicht auf Dashboard */}
-      <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* Header - Zentriert auf die gleiche Breite wie die Kacheln für einen sauberen Look */}
+      <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '800px', margin: '0 auto 3rem auto' }}>
         <h1 style={{ margin: 0, fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.025em' }}>MANAGER COCKPIT</h1>
         {activeView !== 'dashboard' && (
           <button 
@@ -47,10 +47,10 @@ export default function App() {
       {/* DASHBOARD ANSICHT */}
       {activeView === 'dashboard' && (
         <main style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
+          display: 'flex', 
+          flexDirection: 'column', // Zwingt die Boxen strikt untereinander
           gap: '2rem',
-          maxWidth: '1200px',
+          maxWidth: '800px', // Begrenzt die Breite, damit sie nicht klobig wirken
           margin: '0 auto'
         }}>
           
@@ -58,7 +58,7 @@ export default function App() {
           <div 
             onClick={() => setActiveView('tasks')}
             style={{ 
-              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', 
+              background: 'linear-gradient(135deg, #f43f5e 0%, #fb923c 100%)', // Kräftiges Pink-Orange
               borderRadius: '16px', 
               padding: '2rem', 
               cursor: 'pointer',
@@ -67,9 +67,9 @@ export default function App() {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold' }}>📋 Aufgaben</h2>
+                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold', color: '#ffffff' }}>📋 Aufgaben</h2>
             </div>
-            <div style={{ fontSize: '0.95rem', backgroundColor: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: '12px' }}>
+            <div style={{ fontSize: '0.95rem', backgroundColor: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: '12px', color: '#ffffff' }}>
               <div style={{ marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
                 <span>Gesamt:</span> <strong>25</strong>
               </div>
@@ -83,7 +83,7 @@ export default function App() {
           <div 
             onClick={() => setActiveView('finance')}
             style={{ 
-              background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)', 
+              background: 'linear-gradient(135deg, #4f46e5 0%, #d946ef 100%)', // Tiefes Blau zu Neon-Lila
               borderRadius: '16px', 
               padding: '2rem', 
               cursor: 'pointer',
@@ -92,13 +92,13 @@ export default function App() {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold' }}>💰 Finanzen</h2>
+                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold', color: '#ffffff' }}>💰 Finanzen</h2>
             </div>
-            <div style={{ fontSize: '0.95rem', backgroundColor: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: '12px' }}>
+            <div style={{ fontSize: '0.95rem', backgroundColor: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: '12px', color: '#ffffff' }}>
               <div style={{ marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
                 <span>Gesamtumsatz:</span> <strong>125.000 €</strong>
               </div>
-              <div style={{ color: '#ddd6fe', display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ color: '#e0e7ff', display: 'flex', justifyContent: 'space-between' }}>
                 <span>Fördermittel:</span> <strong>45.000 €</strong>
               </div>
             </div>
@@ -108,7 +108,7 @@ export default function App() {
           <div 
             onClick={() => setActiveView('chat')}
             style={{ 
-              background: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)', 
+              background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', // Lila zu intensivem Pink
               borderRadius: '16px', 
               padding: '2rem', 
               cursor: 'pointer',
@@ -117,9 +117,9 @@ export default function App() {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold' }}>💬 Interner Chat</h2>
+                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold', color: '#ffffff' }}>💬 Interner Chat</h2>
             </div>
-            <div style={{ fontSize: '0.95rem', backgroundColor: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: '12px' }}>
+            <div style={{ fontSize: '0.95rem', backgroundColor: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: '12px', color: '#ffffff' }}>
               <div style={{ marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
                 <span>Nachrichten gesamt:</span> <strong>100</strong>
               </div>
@@ -132,10 +132,12 @@ export default function App() {
         </main>
       )}
 
-      {/* DETAIL ANSICHTEN */}
-      {activeView === 'tasks' && <TaskManager />}
-      {activeView === 'finance' && <FinanceLedger />}
-      {activeView === 'chat' && <InternalChat />}
+      {/* DETAIL ANSICHTEN - Hier nutzen wir die volle Breite für die Module */}
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        {activeView === 'tasks' && <TaskManager />}
+        {activeView === 'finance' && <FinanceLedger />}
+        {activeView === 'chat' && <InternalChat />}
+      </div>
 
     </div>
   );
