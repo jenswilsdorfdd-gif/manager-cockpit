@@ -52,9 +52,20 @@ export default function App() {
       {/* StyleSheet injizieren */}
       <style>{styleSheet}</style>
 
-      {/* Header */}
-      <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '800px', margin: '0 auto 3rem auto' }}>
-        <h1 style={{ margin: 0, fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.025em' }}>MANAGER COCKPIT</h1>
+      {/* Header mit neuem SONAR Logo */}
+      <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '800px', margin: '0 auto 3rem auto', flexWrap: 'wrap', gap: '1rem' }}>
+        
+        {/* LOGO BEREICH */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <span style={{ color: '#ec4899', fontSize: '2rem', fontWeight: '600', letterSpacing: '1px' }}>
+            ((o))
+          </span>
+          <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: '300', color: '#ffffff', letterSpacing: '0.05em' }}>
+            SONAR <span style={{ fontWeight: '200' }}>MANAGER COCKPIT</span>
+          </h1>
+        </div>
+
+        {/* ZURÜCK BUTTON */}
         {activeView !== 'dashboard' && (
           <button 
             className="fade-in back-btn"
