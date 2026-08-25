@@ -56,7 +56,7 @@ export default function InternalChat() {
     const { data, error } = await supabase
       .from('chat_messages')
       .select('*')
-      .order('created_at', { ascending: true }); // Älteste zuerst, damit wir von oben nach unten lesen
+      .order('created_at', { ascending: true });
 
     if (error) {
       console.error('Fehler beim Laden der Nachrichten:', error);
@@ -81,7 +81,7 @@ export default function InternalChat() {
     if (error) {
       console.error('Fehler beim Senden:', error);
     } else {
-      setNewMessage(''); // Input leeren bei Erfolg
+      setNewMessage('');
     }
   };
 
