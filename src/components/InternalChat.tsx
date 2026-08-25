@@ -20,12 +20,10 @@ export default function InternalChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   
-  // Da noch kein Login existiert, simulieren wir, wer du gerade bist
-  const [activeUser, setActiveUser] = useState(USERS[0]); 
+  // Im Hintergrund fix auf den ersten User gesetzt, bis das echte Login steht. UI ist komplett weg.
+  const [activeUser] = useState(USERS[0]); 
   
-  // NEU: Empfänger-Logik
   const [recipient, setRecipient] = useState<string>('all'); 
-  
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -114,31 +112,23 @@ export default function InternalChat() {
         gap: '1rem',
         flexWrap: 'wrap'
       }}>
-        <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        {/* Farbe auf Weiß (#f9fafb) gesetzt für Lesbarkeit */}
+        <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f9fafb' }}>
           💬 Chat
         </h2>
         
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          {/* Mock-Login (Wer bin ich?) */}
-          <select 
-            value={activeUser.id} 
-            onChange={(e) => setActiveUser(USERS.find(u => u.id === e.target.value) || USERS[0])}
-            style={{ padding: '0.5rem', borderRadius: '8px', backgroundColor: '#374151', color: '#f9fafb', border: 'none', outline: 'none', cursor: 'pointer' }}
-          >
-            {USERS.map(user => (
-              <option key={`sender-${user.id}`} value={user.id}>Ich bin: {user.name}</option>
-            ))}
-          </select>
-
-          {/* NEU: Senden an (Empfänger) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          {/* Label vor das Dropdown gezogen */}
+          <span style={{ color: '#f9fafb', fontSize: '0.9rem', fontWeight: '600' }}>Senden an:</span>
+          
           <select 
             value={recipient} 
             onChange={(e) => setRecipient(e.target.value)}
-            style={{ padding: '0.5rem', borderRadius: '8px', backgroundColor: '#ec4899', color: '#ffffff', border: 'none', outline: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+            style={{ padding: '0.5rem 1rem', borderRadius: '8px', backgroundColor: '#ec4899', color: '#ffffff', border: 'none', outline: 'none', cursor: 'pointer', fontWeight: 'bold' }}
           >
-            <option value="all">Senden an: Alle</option>
+            <option value="all">Alle</option>
             {USERS.map(user => (
-              <option key={`rec-${user.id}`} value={user.id}>Senden an: {user.name}</option>
+              <option key={`rec-${user.id}`} value={user.id}>{user.name}</option>
             ))}
           </select>
         </div>
@@ -149,7 +139,6 @@ export default function InternalChat() {
         {messages.map((msg) => {
           const isMe = msg.sender_id === activeUser.id;
           
-          // Nachrichten filtern: Nur anzeigen, wenn an mich, von mir oder an Alle
           const isRelevant = msg.recipient_id === null || msg.recipient_id === activeUser.id || isMe;
           if (!isRelevant) return null;
 
