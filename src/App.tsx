@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { supabase } from './supabase';
-import { Session } from '@supabase/supabase-js';
+import type { Session } from '@supabase/supabase-js';
 import InternalChat from './components/InternalChat';
 import Login from './components/Login';
 
 // --- ANIMATIONEN & STYLES ---
-// CSS direkt injiziert für fließende Animationen ohne externe Dependencies (Regel 11)
 const styleSheet = `
   .fade-in {
     animation: fadeIn 0.3s ease-out forwards;
