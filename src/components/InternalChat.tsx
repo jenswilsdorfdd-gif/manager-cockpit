@@ -87,7 +87,6 @@ export default function InternalChat() {
     }
   };
 
-  // Hilfsfunktion: Kürzt vorerst die UUID, bis wir eine echte User-Tabelle haben
   const formatUser = (uuid: string | null) => {
     if (!uuid) return 'Alle';
     if (uuid === activeUserId) return 'Du';
@@ -107,6 +106,14 @@ export default function InternalChat() {
       color: '#f9fafb'
     }}>
       
+      {/* Scope-isolierter Style für den Placeholder im Chat-Input */}
+      <style>{`
+        .chat-input::placeholder {
+          color: #e5e7eb !important;
+          opacity: 0.9 !important;
+        }
+      `}</style>
+
       {/* Header & Controls */}
       <div style={{ 
         padding: '1.5rem 2rem', 
@@ -117,52 +124,54 @@ export default function InternalChat() {
         flexWrap: 'wrap',
         borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
       }}>
-        <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#ec4899' }}>
+        <h2 style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#ec4899' }}>
           💬 Interner Chat
         </h2>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <span style={{ color: '#9ca3af', fontSize: '0.95rem', fontWeight: '600' }}>Senden an:</span>
+          <span style={{ color: '#d1d5db', fontSize: '1.1rem', fontWeight: '600' }}>Senden an:</span>
           
           <select 
             value={recipient} 
             onChange={(e) => setRecipient(e.target.value)}
             style={{ 
-              padding: '0.6rem 1.2rem', 
+              padding: '0.75rem 1.25rem', 
               borderRadius: '8px', 
-              backgroundColor: '#ec4899', 
+              backgroundColor: '#1f2937', 
               color: '#ffffff', 
-              border: 'none', 
+              border: '2px solid #ec4899', 
               outline: 'none', 
               cursor: 'pointer', 
               fontWeight: '600',
+              fontSize: '1.1rem',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2)'
             }}
           >
-            <option value="all">Alle</option>
-            <option value="" disabled>--- Echte User folgen ---</option>
+            <option value="all" style={{ backgroundColor: '#1f2937', color: '#ffffff' }}>Alle</option>
+            <option value="" disabled style={{ backgroundColor: '#1f2937', color: '#9ca3af' }}>--- Echte User folgen ---</option>
           </select>
         </div>
       </div>
 
       {/* Nachrichten-Verlauf */}
-      <div style={{ flex: 1, padding: '2rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div style={{ flex: 1, padding: '2rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         {messages.map((msg) => {
           const isMe = msg.sender_id === activeUserId;
           
-          // Filter: Zeige nur Globale (null), an MICH adressierte, oder VON MIR gesendete Nachrichten
           const isRelevant = msg.recipient_id === null || msg.recipient_id === activeUserId || isMe;
           if (!isRelevant) return null;
 
           return (
-            <div key={msg.id} className="fade-in" style={{ alignSelf: isMe ? 'flex-end' : 'flex-start', maxWidth: '75%' }}>
-              <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.4rem', textAlign: isMe ? 'right' : 'left' }}>
+            <div key={msg.id} className="fade-in" style={{ alignSelf: isMe ? 'flex-end' : 'flex-start', maxWidth: '80%' }}>
+              <div style={{ fontSize: '0.95rem', color: '#9ca3af', marginBottom: '0.5rem', textAlign: isMe ? 'right' : 'left' }}>
                 {formatUser(msg.sender_id)} {msg.recipient_id ? `→ an ${formatUser(msg.recipient_id)}` : '→ an Alle'}
               </div>
               <div style={{ 
-                padding: '1rem 1.5rem', 
+                padding: '1.25rem 1.75rem', 
                 backgroundColor: isMe ? '#ec4899' : '#1f2937', 
                 color: '#ffffff',
+                fontSize: '1.1rem',
+                lineHeight: '1.5',
                 borderRadius: '16px', 
                 borderBottomRightRadius: isMe ? '4px' : '16px',
                 borderBottomLeftRadius: !isMe ? '4px' : '16px',
@@ -179,32 +188,35 @@ export default function InternalChat() {
       {/* Eingabefeld */}
       <form onSubmit={handleSendMessage} style={{ padding: '1.5rem 2rem', backgroundColor: 'rgba(255, 255, 255, 0.02)', display: 'flex', gap: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
         <input 
-          type="text" 
+          type="text"
+          className="chat-input"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Nachricht tippen..." 
           style={{ 
             flex: 1, 
-            padding: '1rem 1.25rem', 
+            padding: '1.25rem 1.5rem', 
             borderRadius: '12px', 
             backgroundColor: '#1f2937', 
-            color: '#f9fafb', 
-            border: 'none', 
+            color: '#ffffff', 
+            fontSize: '1.1rem',
+            border: '1px solid rgba(255, 255, 255, 0.1)', 
             outline: 'none',
-            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)'
+            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)'
           }}
         />
         <button 
           type="submit" 
           className="hover-scale"
           style={{ 
-            padding: '0 1.5rem', 
+            padding: '0 2rem', 
             backgroundColor: '#be185d', 
             color: 'white', 
             border: 'none', 
             borderRadius: '12px', 
             cursor: 'pointer', 
             fontWeight: 'bold',
+            fontSize: '1.1rem',
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2)'
           }}
         >
