@@ -9,25 +9,39 @@ interface ChatMessage {
   created_at: string;
 }
 
+interface Profile {
+  id: string;
+  first_name: string;
+}
+
 export default function InternalChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   
-  // Speichert die echte Supabase-UUID des aktuell eingeloggten Users
+  // Auth & Profile States
   const [activeUserId, setActiveUserId] = useState<string | null>(null); 
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   
   const [recipient, setRecipient] = useState<string>('all'); 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // 1. Aktuellen User beim Mounten laden
-    const fetchUser = async () => {
+    // 1. User & Profile beim Mounten laden
+    const fetchUserAndProfiles = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setActiveUserId(user.id);
       }
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('id, first_name');
+        
+      if (!profileError && profileData) {
+        setProfiles(profileData);
+      }
     };
-    fetchUser();
+    fetchUserAndProfiles();
 
     // 2. Nachrichten laden & Subscription starten
     fetchMessages();
@@ -87,10 +101,12 @@ export default function InternalChat() {
     }
   };
 
+  // Hilfsfunktion: Wandelt UUID in echten Vornamen um
   const formatUser = (uuid: string | null) => {
     if (!uuid) return 'Alle';
     if (uuid === activeUserId) return 'Du';
-    return `User (${uuid.substring(0, 4)}...)`;
+    const userProfile = profiles.find(p => p.id === uuid);
+    return userProfile ? userProfile.first_name : 'Unbekannt';
   };
 
   return (
@@ -148,7 +164,15 @@ export default function InternalChat() {
             }}
           >
             <option value="all" style={{ backgroundColor: '#1f2937', color: '#ffffff' }}>Alle</option>
-            <option value="" disabled style={{ backgroundColor: '#1f2937', color: '#9ca3af' }}>--- Echte User folgen ---</option>
+            {profiles.map((profile) => (
+              <option 
+                key={profile.id} 
+                value={profile.id} 
+                style={{ backgroundColor: '#1f2937', color: '#ffffff' }}
+              >
+                {profile.first_name}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -158,6 +182,7 @@ export default function InternalChat() {
         {messages.map((msg) => {
           const isMe = msg.sender_id === activeUserId;
           
+          // Filter: Zeige nur Globale (null), an MICH adressierte, oder VON MIR gesendete Nachrichten
           const isRelevant = msg.recipient_id === null || msg.recipient_id === activeUserId || isMe;
           if (!isRelevant) return null;
 
