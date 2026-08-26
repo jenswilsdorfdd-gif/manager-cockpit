@@ -55,7 +55,7 @@ export default function Login() {
         color: '#f9fafb'
       }}>
         
-        <h2 style={{ marginTop: 0, marginBottom: '2rem', fontSize: '1.5rem', textAlign: 'center' }}>
+        <h2 style={{ marginTop: 0, marginBottom: '2rem', fontSize: '1.5rem', textAlign: 'center', color: '#ffffff' }}>
           System-Login
         </h2>
 
@@ -76,7 +76,7 @@ export default function Login() {
         <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="email" style={{ fontSize: '0.9rem', color: '#9ca3af', fontWeight: '600' }}>E-Mail Adresse</label>
+            <label htmlFor="email" style={{ fontSize: '0.9rem', color: '#d1d5db', fontWeight: '600' }}>E-Mail Adresse</label>
             <input
               id="email"
               type="email"
@@ -87,7 +87,7 @@ export default function Login() {
                 padding: '0.8rem 1rem',
                 borderRadius: '8px',
                 backgroundColor: '#1f2937',
-                color: '#f9fafb',
+                color: '#ffffff',
                 border: '1px solid rgba(255, 255, 255, 0.05)',
                 outline: 'none',
                 boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)'
@@ -96,7 +96,7 @@ export default function Login() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="password" style={{ fontSize: '0.9rem', color: '#9ca3af', fontWeight: '600' }}>Passwort</label>
+            <label htmlFor="password" style={{ fontSize: '0.9rem', color: '#d1d5db', fontWeight: '600' }}>Passwort</label>
             <input
               id="password"
               type="password"
@@ -107,7 +107,7 @@ export default function Login() {
                 padding: '0.8rem 1rem',
                 borderRadius: '8px',
                 backgroundColor: '#1f2937',
-                color: '#f9fafb',
+                color: '#ffffff',
                 border: '1px solid rgba(255, 255, 255, 0.05)',
                 outline: 'none',
                 boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)'
