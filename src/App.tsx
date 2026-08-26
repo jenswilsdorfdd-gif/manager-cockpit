@@ -1,5 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from './supabase';
+import { Session } from '@supabase/supabase-js';
 import InternalChat from './components/InternalChat';
+import Login from './components/Login';
 
 // --- ANIMATIONEN & STYLES ---
 // CSS direkt injiziert für fließende Animationen ohne externe Dependencies (Regel 11)
@@ -18,12 +21,16 @@ const styleSheet = `
     transform: translateY(-3px);
     box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.4) !important;
   }
-  .back-btn {
+  .back-btn, .logout-btn {
     transition: all 0.2s ease;
   }
   .back-btn:hover {
     background-color: #374151 !important;
     transform: scale(1.03);
+  }
+  .logout-btn:hover {
+    background-color: rgba(244, 63, 94, 0.1) !important;
+    color: #f43f5e !important;
   }
 `;
 
@@ -44,8 +51,39 @@ const FinanceLedger = () => (
 
 // --- HAUPT-LAYOUT ---
 export default function App() {
+  const [session, setSession] = useState<Session | null>(null);
   const [activeView, setActiveView] = useState<'dashboard' | 'tasks' | 'finance' | 'chat'>('dashboard');
 
+  // Supabase Auth Listener
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+
+  // Wenn nicht eingeloggt -> Zeige streng isolierten Login
+  if (!session) {
+    return (
+      <div style={{ minHeight: '100vh', backgroundColor: '#0b0f19', color: '#f9fafb', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+        <style>{styleSheet}</style>
+        <Login />
+      </div>
+    );
+  }
+
+  // Wenn eingeloggt -> Zeige Dashboard
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#0b0f19', color: '#f9fafb', padding: '2rem', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       
@@ -65,25 +103,43 @@ export default function App() {
           </h1>
         </div>
 
-        {/* ZURÜCK BUTTON */}
-        {activeView !== 'dashboard' && (
+        {/* BEDIENELEMENTE (Zurück / Logout) */}
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {activeView !== 'dashboard' && (
+            <button 
+              className="fade-in back-btn"
+              onClick={() => setActiveView('dashboard')}
+              style={{ 
+                padding: '0.75rem 1.5rem', 
+                backgroundColor: '#1f2937', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '8px', 
+                cursor: 'pointer', 
+                fontWeight: '600',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2)'
+              }}
+            >
+              ← Zurück zum Dashboard
+            </button>
+          )}
+          
           <button 
-            className="fade-in back-btn"
-            onClick={() => setActiveView('dashboard')}
+            className="logout-btn"
+            onClick={handleLogout}
             style={{ 
-              padding: '0.75rem 1.5rem', 
-              backgroundColor: '#1f2937', 
-              color: 'white', 
-              border: 'none', 
+              padding: '0.75rem 1rem', 
+              backgroundColor: 'transparent', 
+              color: '#9ca3af', 
+              border: '1px solid rgba(255, 255, 255, 0.1)', 
               borderRadius: '8px', 
               cursor: 'pointer', 
               fontWeight: '600',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2)'
             }}
           >
-            ← Zurück zum Dashboard
+            Logout
           </button>
-        )}
+        </div>
       </header>
       
       {/* DASHBOARD ANSICHT */}
