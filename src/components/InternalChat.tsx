@@ -26,17 +26,20 @@ export default function InternalChat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // 1. User & Profile beim Mounten laden
+    // 1. User & Profile beim Mounten laden inkl. Debugging-Logs
     const fetchUserAndProfiles = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setActiveUserId(user.id);
       }
 
+      console.log("Lade Profile...");
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('id, first_name');
         
+      console.log("Supabase Profil-Antwort:", { profileData, profileError });
+
       if (!profileError && profileData) {
         setProfiles(profileData);
       }
