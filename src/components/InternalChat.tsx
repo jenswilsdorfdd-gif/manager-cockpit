@@ -9,24 +9,27 @@ interface ChatMessage {
   created_at: string;
 }
 
-const USERS = [
-  { id: '11111111-1111-1111-1111-111111111111', name: 'Manuel' },
-  { id: '22222222-2222-2222-2222-222222222222', name: 'Laura' },
-  { id: '33333333-3333-3333-3333-333333333333', name: 'Jens' },
-  { id: '44444444-4444-4444-4444-444444444444', name: 'Nico' },
-];
-
 export default function InternalChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   
-  // Im Hintergrund fix auf den ersten User gesetzt (ohne UI)
-  const [activeUser] = useState(USERS[0]); 
+  // Speichert die echte Supabase-UUID des aktuell eingeloggten Users
+  const [activeUserId, setActiveUserId] = useState<string | null>(null); 
   
   const [recipient, setRecipient] = useState<string>('all'); 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // 1. Aktuellen User beim Mounten laden
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setActiveUserId(user.id);
+      }
+    };
+    fetchUser();
+
+    // 2. Nachrichten laden & Subscription starten
     fetchMessages();
 
     const subscription = supabase
@@ -65,13 +68,13 @@ export default function InternalChat() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !activeUserId) return;
 
     const { error } = await supabase
       .from('chat_messages')
       .insert([
         { 
-          sender_id: activeUser.id,
+          sender_id: activeUserId,
           recipient_id: recipient === 'all' ? null : recipient,
           message: newMessage 
         }
@@ -84,10 +87,11 @@ export default function InternalChat() {
     }
   };
 
-  const getUserName = (uuid: string | null) => {
+  // Hilfsfunktion: Kürzt vorerst die UUID, bis wir eine echte User-Tabelle haben
+  const formatUser = (uuid: string | null) => {
     if (!uuid) return 'Alle';
-    const user = USERS.find(u => u.id === uuid);
-    return user ? user.name : 'Unbekannt';
+    if (uuid === activeUserId) return 'Du';
+    return `User (${uuid.substring(0, 4)}...)`;
   };
 
   return (
@@ -136,9 +140,7 @@ export default function InternalChat() {
             }}
           >
             <option value="all">Alle</option>
-            {USERS.map(user => (
-              <option key={`rec-${user.id}`} value={user.id}>{user.name}</option>
-            ))}
+            <option value="" disabled>--- Echte User folgen ---</option>
           </select>
         </div>
       </div>
@@ -146,15 +148,16 @@ export default function InternalChat() {
       {/* Nachrichten-Verlauf */}
       <div style={{ flex: 1, padding: '2rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         {messages.map((msg) => {
-          const isMe = msg.sender_id === activeUser.id;
+          const isMe = msg.sender_id === activeUserId;
           
-          const isRelevant = msg.recipient_id === null || msg.recipient_id === activeUser.id || isMe;
+          // Filter: Zeige nur Globale (null), an MICH adressierte, oder VON MIR gesendete Nachrichten
+          const isRelevant = msg.recipient_id === null || msg.recipient_id === activeUserId || isMe;
           if (!isRelevant) return null;
 
           return (
             <div key={msg.id} className="fade-in" style={{ alignSelf: isMe ? 'flex-end' : 'flex-start', maxWidth: '75%' }}>
               <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.4rem', textAlign: isMe ? 'right' : 'left' }}>
-                {getUserName(msg.sender_id)} {msg.recipient_id ? `→ an ${getUserName(msg.recipient_id)}` : '→ an Alle'}
+                {formatUser(msg.sender_id)} {msg.recipient_id ? `→ an ${formatUser(msg.recipient_id)}` : '→ an Alle'}
               </div>
               <div style={{ 
                 padding: '1rem 1.5rem', 
